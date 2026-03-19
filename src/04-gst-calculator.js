@@ -40,4 +40,32 @@
  */
 export function calculateGST(amount, category) {
   // Your code here
+  // 1) amount must be a positive finite number
+if (!Number.isFinite(amount) || amount <= 0) {
+  return null;
+}
+
+// 2) category must be a string
+if (typeof category !== 'string') {
+  return null;
+}
+
+// 3) lookup gst rate (case-insensitive)
+const rates = {
+  essential: 0,
+  food: 5,
+  standard: 12,
+  electronics: 18,
+  luxury: 28
+};
+const key = category.toLowerCase();
+if (!Object.prototype.hasOwnProperty.call(rates, key)) return null;
+const gstRate = rates[key];
+
+// 4) compute and round to 2 decimals
+const gstAmount = parseFloat((amount * gstRate / 100).toFixed(2));
+const totalAmount = parseFloat((amount + gstAmount).toFixed(2));
+
+return { baseAmount: amount, gstRate, gstAmount, totalAmount };
+
 }

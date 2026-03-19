@@ -31,4 +31,20 @@
  */
 export function fixBollywoodTitle(title) {
   // Your code here
+  if ( typeof title !== "string" || title.trim() === "" ) return "";
+  const smallWords = ["ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"];
+  const words = title.trim().split(/\s+/);
+  console.log(words, "---");
+  const fixedWords = words.map((word, index) => {
+    const lowerWord = word.toLowerCase();
+    if (index !== 0 && smallWords.includes(lowerWord)) {
+      return lowerWord;
+    } else {
+      return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1);
+    } });
+  console.log(fixedWords, "---");
+  return fixedWords.join(" "); 
 }
+
+fixBollywoodTitle("  DILWALE   DULHANIA   LE   JAYENGE  ")
+fixBollywoodTitle("dil ka kya kare")
