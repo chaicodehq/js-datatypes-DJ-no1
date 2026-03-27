@@ -47,4 +47,68 @@
  */
 export function buildZomatoOrder(cart, coupon) {
   // Your code here
+
+  if (!Array.isArray(cart) || cart.length === 0) return null;
+
+  const items = cart
+
+    .filter(i => i.qty > 0)
+    .map(item => {
+      const addonTotal = item.addons ? item.addons.reduce((sum, addon) => {
+        const [name, price] = addon.split(":");
+        return sum + parseFloat(price);
+      }, 0) : 0;
+      const itemTotal = (item.price + addonTotal) * item.qty;
+      return {
+        name: item.name,
+        qty: item.qty,
+        basePrice: item.price,
+        addonTotal,
+        itemTotal
+      };
+    });
+
+    const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
+
+    let deliveryFee;
+
+
+    if (subtotal < 500) {
+      deliveryFee = 30;
+    } else if (subtotal < 1000) {
+      deliveryFee = 15;
+    } else {
+      deliveryFee = 0;
+    }
+
+    const gst = parseFloat((subtotal * 0.05).toFixed(2));
+
+    let discount = 0;
+
+    if (coupon) {
+      const code = coupon.toLowerCase();
+      if (code === "first50") {
+        discount = Math.min(subtotal * 0.5, 150);
+      } else if (code === "flat100") {
+        discount = 100;
+      } else if (code == "freeship") {
+        discount = deliveryFee;
+        deliveryFee = 0;
+      }
+      else {discount = 0;
+      }
+    }
+    
+
+    const grandTotal = parseFloat(Math.max(subtotal + deliveryFee + gst - discount, 0).toFixed(2));
+
+    return {
+      items,
+      subtotal,
+      deliveryFee,
+      gst,
+      discount,
+      grandTotal
+    };
+
 }

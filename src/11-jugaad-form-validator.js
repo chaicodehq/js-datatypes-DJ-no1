@@ -63,4 +63,85 @@
  */
 export function validateForm(formData) {
   // Your code here
+  const errors = {};
+
+  //validate name
+  let name = formData.name;
+  if (
+    typeof name !== "string" ||
+    name.trim().length < 2 ||
+    name.trim().length > 50
+  ) {
+    errors.name = "Name must be 2-50 characters";
+  }
+
+  //   //validate email   *   2. email: must be a string containing exactly one "@" and at least one "."
+  //  *      after the "@". Use indexOf(), lastIndexOf(), includes().
+  //  *      Error: "Invalid email format"
+  //  *
+
+  let email = formData.email;
+  const atIndex = email?.indexOf("@");
+  const lastAtIndex = email?.lastIndexOf("@");
+  const dotIndex = email?.indexOf(".");
+  if (
+    typeof email !== "string" ||
+    atIndex === -1 ||
+    atIndex !== lastAtIndex ||
+    dotIndex === -1 ||
+    dotIndex < atIndex
+  ) {
+    errors.email = "Invalid email format";
+  }
+
+  //validate phone
+  let phone = formData.phone;
+  if (
+    typeof phone !== "string" ||
+    phone.length !== 10 ||
+    !["6", "7", "8", "9"].includes(phone[0]) ||
+    ![...phone].every((char) => char >= "0" && char <= "9")
+  ) {
+    errors.phone = "Invalid Indian phone number";
+  }
+
+  //validate age
+  let age = formData.age;
+  if (typeof age === "string") {
+    age = parseInt(age);
+  }
+  if (
+    typeof age !== "number" ||
+    isNaN(age) ||
+    !Number.isInteger(age) ||
+    age < 16 ||
+    age > 100
+  ) {
+    errors.age = "Age must be an integer between 16 and 100";
+  }
+
+  //validate pincode
+  let pincode = formData.pincode;
+  if (
+    typeof pincode !== "string" ||
+    pincode.length !== 6 ||
+    pincode.startsWith("0") ||
+    ![...pincode].every((char) => char >= "0" && char <= "9")
+  ) {
+    errors.pincode = "Invalid Indian pincode";
+  }
+
+  //validate state
+  let state = formData.state ?? "";
+  if (typeof state !== "string" || state.trim().length === 0) {
+    errors.state = "State is required";
+  }
+
+  //validate agreeTerms
+  let agreeTerms = formData.agreeTerms;
+  if (!Boolean(agreeTerms)) {
+    errors.agreeTerms = "Must agree to terms";
+  }
+
+  return { isValid: Object.keys(errors).length === 0, errors };
 }
